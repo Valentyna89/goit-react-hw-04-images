@@ -7,17 +7,17 @@ const modalRoot = document.querySelector('#modal-root');
 
 const Modal = ({ onClose, children }) => {
   useEffect(() => {
+    const handleEscClick = e => {
+      if (e.code === 'Escape') {
+        onClose();
+      }
+    };
+
     window.addEventListener('keydown', handleEscClick);
     return () => {
       window.removeEventListener('keydown', handleEscClick);
     };
-  }, []);
-
-  const handleEscClick = e => {
-    if (e.code === 'Escape') {
-      onClose();
-    }
-  };
+  }, [onClose]);
 
   const handleBackdropClick = e => {
     if (e.currentTarget === e.target) {
