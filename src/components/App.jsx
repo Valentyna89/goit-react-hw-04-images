@@ -12,12 +12,12 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [hits, setHits] = useState([]);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(12);
   const [loading, setLoading] = useState(false);
   const [largeImage, setLargeImage] = useState('');
   const [error, setError] = useState(null);
   const [totalHits, setTotalHits] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const perPage = 12;
 
   useEffect(() => {
     if (searchQuery !== '') {
@@ -25,27 +25,27 @@ const App = () => {
 
       getImages(searchQuery, page, perPage)
         .then(({ hits, totalHits }) => {
-          setHits(hits);
+          setHits(prevHits => [...prevHits, ...hits]);
           setTotalHits(totalHits);
         })
         .catch(error => setError(error))
         .finally(() => setLoading(false));
     }
-  }, [searchQuery]);
+  }, [searchQuery, page]);
 
-  useEffect(() => {
-    if (page !== 1) {
-      setLoading(true);
+  // useEffect(() => {
+  //   if (page !== 1) {
+  //     setLoading(true);
 
-      getImages(searchQuery, page)
-        .then(({ hits, totalHits }) => {
-          setHits(prev => [...prev, ...hits]);
-          setTotalHits(totalHits);
-        })
-        .catch(error => setError(error))
-        .finally(() => setLoading(false));
-    }
-  }, [page]);
+  //     getImages(searchQuery, page)
+  //       .then(({ hits, totalHits }) => {
+  //         setHits(prev => [...prev, ...hits]);
+  //         setTotalHits(totalHits);
+  //       })
+  //       .catch(error => setError(error))
+  //       .finally(() => setLoading(false));
+  //   }
+  // }, [page]);
 
   const showLoadMore = () => {
     return page < Math.ceil(totalHits / perPage);
@@ -54,6 +54,7 @@ const App = () => {
   const handleFormSubmit = searchQuery => {
     setSearchQuery(searchQuery);
     setPage(1);
+    setHits([]);
   };
 
   const toggleModal = () => {
